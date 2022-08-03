@@ -7,6 +7,8 @@ struct Player {
     direction: i8, // 0 - N, 1 - E, 2 - S, 3 - W
     animation: f32,
     moving: bool,
+    attack_speed: f32,
+    attacking: bool,
 }
 
 #[macroquad::main("Game")]
@@ -19,16 +21,16 @@ async fn main() {
     let player_texture: Texture2D = load_texture("assets/character.png").await.unwrap();
     player_texture.set_filter(FilterMode::Nearest);
 
-
     let mut player = Player {
-        x: 100.0, 
+        x: 100.0,
         y: 200.0,
         walking_speed: 2.0,
         direction: 2,
         animation: 0.0,
         moving: false,
+        attack_speed: 2.0,
+        attacking: false,
     };
-    
 
     loop {
         clear_background(DARKGRAY);
@@ -51,10 +53,8 @@ async fn main() {
             }
         }
 
-
         draw_text("FPS: ", 10.0, 20.0, 25.0, MAGENTA);
         draw_text(&get_fps().to_string(), 65.0, 20.0, 25.0, MAGENTA);
-
 
         let temp_mouse_position = mouse_position();
 
@@ -67,31 +67,69 @@ async fn main() {
         if is_key_pressed(KeyCode::Escape) {
             break;
         }
-        
+
         player.moving = false;
 
-        if is_key_down(KeyCode::A){
+        if is_key_down(KeyCode::Left) {
             player.x -= player.walking_speed;
-            player.direction = 3;
             player.moving = true;
+            if player.attacking == false {
+                player.direction = 3;
+            }
         }
-        if is_key_down(KeyCode::D){
+        if is_key_down(KeyCode::Right) {
             player.x += player.walking_speed;
-            player.direction = 1;
             player.moving = true;
+            if player.attacking == false {
+                player.direction = 1;
+            }
         }
-        if is_key_down(KeyCode::W){
+        if is_key_down(KeyCode::Up) {
             player.y -= player.walking_speed;
-            player.direction = 0;
             player.moving = true;
+            if player.attacking == false {
+                player.direction = 0;
+            }
         }
-        if is_key_down(KeyCode::S){
+        if is_key_down(KeyCode::Down) {
             player.y += player.walking_speed;
-            player.direction = 2;
             player.moving = true;
+            if player.attacking == false {
+                player.direction = 2;
+            }
         }
 
-        if player.moving == true {
+        if player.attacking == false {
+            if is_key_down(KeyCode::A) {
+                player.animation = 0.0;
+                player.attacking = true;
+                player.direction = 3;
+            }
+            if is_key_down(KeyCode::D) {
+                player.animation = 0.0;
+                player.attacking = true;
+                player.direction = 1;
+            }
+            if is_key_down(KeyCode::W) {
+                player.animation = 0.0;
+                player.attacking = true;
+                player.direction = 0;
+            }
+            if is_key_down(KeyCode::S) {
+                player.animation = 0.0;
+                player.attacking = true;
+                player.direction = 2;
+            }
+        }
+
+        if player.attacking == true {
+            if (player.animation + player.attack_speed / 10.0) >= 4.0 {
+                player.animation = 0.0;
+                player.attacking = false;
+            } else {
+                player.animation += player.attack_speed / 10.0;
+            }
+        } else if player.moving == true {
             if (player.animation + player.walking_speed / 25.0) >= 4.0 {
                 player.animation = 0.0;
             } else {
@@ -105,64 +143,156 @@ async fn main() {
 
         match player.direction {
             0 => {
-                draw_texture_ex(
-                    player_texture,
-                    player.x,
-                    player.y,
-                    WHITE,
-                    DrawTextureParams {
-                        dest_size: Some(vec2(32.0, 64.0)),
-                        source: Some(Rect::new(16.0 * player.animation.floor(), 2.0*32.0, 16.0, 32.0)),
-                        ..Default::default()
-                    },
-                );
-            },
+                if player.attacking == true {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(64.0, 64.0)),
+                            source: Some(Rect::new(
+                                32.0 * player.animation.floor(),
+                                5.0 * 32.0,
+                                32.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                } else {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(32.0, 64.0)),
+                            source: Some(Rect::new(
+                                16.0 * player.animation.floor(),
+                                2.0 * 32.0,
+                                16.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                }
+            }
             1 => {
-                draw_texture_ex(
-                    player_texture,
-                    player.x,
-                    player.y,
-                    WHITE,
-                    DrawTextureParams {
-                        dest_size: Some(vec2(32.0, 64.0)),
-                        source: Some(Rect::new(16.0 * player.animation.floor(), 1.0*32.0, 16.0, 32.0)),
-                        ..Default::default()
-                    },
-                );
-            },
+                if player.attacking == true {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(64.0, 64.0)),
+                            source: Some(Rect::new(
+                                32.0 * player.animation.floor(),
+                                6.0 * 32.0,
+                                32.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                } else {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(32.0, 64.0)),
+                            source: Some(Rect::new(
+                                16.0 * player.animation.floor(),
+                                1.0 * 32.0,
+                                16.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                }
+            }
             2 => {
-                draw_texture_ex(
-                    player_texture,
-                    player.x,
-                    player.y,
-                    WHITE,
-                    DrawTextureParams {
-                        dest_size: Some(vec2(32.0, 64.0)),
-                        source: Some(Rect::new(16.0 * player.animation.floor(), 0.0*32.0, 16.0, 32.0)),
-                        ..Default::default()
-                    },
-                );
-            },
+                if player.attacking == true {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(64.0, 64.0)),
+                            source: Some(Rect::new(
+                                32.0 * player.animation.floor(),
+                                4.0 * 32.0,
+                                32.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                } else {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(32.0, 64.0)),
+                            source: Some(Rect::new(
+                                16.0 * player.animation.floor(),
+                                0.0 * 32.0,
+                                16.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                }
+            }
             3 => {
-                draw_texture_ex(
-                    player_texture,
-                    player.x,
-                    player.y,
-                    WHITE,
-                    DrawTextureParams {
-                        dest_size: Some(vec2(32.0, 64.0)),
-                        source: Some(Rect::new(16.0 * player.animation.floor(), 3.0*32.0, 16.0, 32.0)),
-                        ..Default::default()
-                    },
-                );
-            },
-            
-            _ => {
-                
-            },
-        }
+                if player.attacking == true {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(64.0, 64.0)),
+                            source: Some(Rect::new(
+                                32.0 * player.animation.floor(),
+                                7.0 * 32.0,
+                                32.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                } else {
+                    draw_texture_ex(
+                        player_texture,
+                        player.x,
+                        player.y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(32.0, 64.0)),
+                            source: Some(Rect::new(
+                                16.0 * player.animation.floor(),
+                                3.0 * 32.0,
+                                16.0,
+                                32.0,
+                            )),
+                            ..Default::default()
+                        },
+                    );
+                }
+            }
 
-        
+            _ => {}
+        }
 
         next_frame().await
     }
