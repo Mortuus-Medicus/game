@@ -70,28 +70,28 @@ async fn main() {
 
         player.moving = false;
 
-        if is_key_down(KeyCode::Left) {
+        if is_key_down(KeyCode::A) {
             player.x -= player.walking_speed;
             player.moving = true;
             if player.attacking == false {
                 player.direction = 3;
             }
         }
-        if is_key_down(KeyCode::Right) {
+        if is_key_down(KeyCode::D) {
             player.x += player.walking_speed;
             player.moving = true;
             if player.attacking == false {
                 player.direction = 1;
             }
         }
-        if is_key_down(KeyCode::Up) {
+        if is_key_down(KeyCode::W) {
             player.y -= player.walking_speed;
             player.moving = true;
             if player.attacking == false {
                 player.direction = 0;
             }
         }
-        if is_key_down(KeyCode::Down) {
+        if is_key_down(KeyCode::S) {
             player.y += player.walking_speed;
             player.moving = true;
             if player.attacking == false {
@@ -100,22 +100,22 @@ async fn main() {
         }
 
         if player.attacking == false {
-            if is_key_down(KeyCode::A) {
+            if is_key_down(KeyCode::Left) {
                 player.animation = 0.0;
                 player.attacking = true;
                 player.direction = 3;
             }
-            if is_key_down(KeyCode::D) {
+            if is_key_down(KeyCode::Right) {
                 player.animation = 0.0;
                 player.attacking = true;
                 player.direction = 1;
             }
-            if is_key_down(KeyCode::W) {
+            if is_key_down(KeyCode::Up) {
                 player.animation = 0.0;
                 player.attacking = true;
                 player.direction = 0;
             }
-            if is_key_down(KeyCode::S) {
+            if is_key_down(KeyCode::Down) {
                 player.animation = 0.0;
                 player.attacking = true;
                 player.direction = 2;
