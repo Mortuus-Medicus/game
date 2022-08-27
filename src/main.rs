@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+
 struct Player {
     x: f32,
     y: f32,
@@ -13,12 +14,13 @@ struct Player {
 
 #[macroquad::main("Game")]
 async fn main() {
-    let texture: Texture2D = load_texture("assets/Overworld.png").await.unwrap();
+    macroquad::file::set_pc_assets_folder("assets");
+    let texture: Texture2D = load_texture("Overworld.png").await.unwrap();
     texture.set_filter(FilterMode::Nearest);
     let tileset_width = 32.0;
     let tileset_height = 32.0;
 
-    let player_texture: Texture2D = load_texture("assets/character.png").await.unwrap();
+    let player_texture: Texture2D = load_texture("character.png").await.unwrap();
     player_texture.set_filter(FilterMode::Nearest);
 
     let mut player = Player {

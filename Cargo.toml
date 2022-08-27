@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 macroquad = "0.3"
+
+[package.metadata.android]
+assets = "assets/"
