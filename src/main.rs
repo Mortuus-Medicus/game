@@ -1,5 +1,6 @@
-use macroquad::prelude::*;
+// To compile for Android run this command while having Docker Destop running: docker run --rm -v $(pwd):/root/src -w /root/src notfl3/cargo-apk cargo quad-apk build --release
 
+use macroquad::prelude::*;
 
 struct Player {
     x: f32,
@@ -17,11 +18,17 @@ async fn main() {
     macroquad::file::set_pc_assets_folder("assets");
     let texture: Texture2D = load_texture("Overworld.png").await.unwrap();
     texture.set_filter(FilterMode::Nearest);
-    let tileset_width = 32.0;
-    let tileset_height = 32.0;
+    //let tileset_width = 32.0;
+    //let tileset_height = 32.0;
+
+    let world_size = [ 14, 10 ];
+    let tile_size = [ 40.0, 20.0 ];
+    let origin = [ 5.0, 1.0 ];
 
     let player_texture: Texture2D = load_texture("character.png").await.unwrap();
+    let my_tiles: Texture2D = load_texture("tiles.png").await.unwrap();
     player_texture.set_filter(FilterMode::Nearest);
+    my_tiles.set_filter(FilterMode::Nearest);
 
     let mut player = Player {
         x: 100.0,
@@ -35,10 +42,13 @@ async fn main() {
     };
 
     loop {
-        clear_background(DARKGRAY);
-        let player_vision_width = ((screen_width() / tileset_width) + 1.0) as i32;
-        let player_vision_height = ((screen_height() / tileset_height) + 1.0) as i32;
+        // clear_background(DARKGRAY);
+        clear_background(BEIGE);
+        //let player_vision_width = ((screen_width() / tileset_width) + 1.0) as i32;
+        //let player_vision_height = ((screen_height() / tileset_height) + 1.0) as i32;
 
+        
+/*
         for i in 0..player_vision_width {
             for j in 0..player_vision_height {
                 draw_texture_ex(
@@ -54,9 +64,29 @@ async fn main() {
                 );
             }
         }
+*/
 
-        draw_text("FPS: ", 10.0, 20.0, 25.0, MAGENTA);
-        draw_text(&get_fps().to_string(), 65.0, 20.0, 25.0, MAGENTA);
+        for y in 0..world_size[0] {
+            for x in 0..world_size[1] {
+                draw_texture_ex(
+                    my_tiles,
+                    (origin[0] * tile_size[0]) + (y as f32 - x as f32) * (tile_size[0] / 2.0),
+                    (origin[1] * tile_size[1]) + (x as f32 + y as f32) * (tile_size[1] / 2.0),
+                    WHITE,
+                    DrawTextureParams {
+                        dest_size: Some(vec2(40.0, 20.0)),
+                        source: Some(Rect::new(40.0, 0.0, 40.0, 20.0)),
+                        ..Default::default()
+                    },
+                );
+            }
+        }
+
+        
+
+
+        draw_text(&format!("FPS: {}", &get_fps().to_string()), 10.0, 20.0, 25.0, MAGENTA);
+        draw_text(&format!("Cell: {} {}", &(mouse_position().0 / tile_size[0]).floor().to_string(), &(mouse_position().1 / tile_size[1]).floor().to_string()), 10.0, 40.0, 25.0, MAGENTA);
 
         let temp_mouse_position = mouse_position();
 
