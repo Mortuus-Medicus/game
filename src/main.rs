@@ -1,4 +1,4 @@
-// To compile for Android run this command while having Docker Destop running: docker run --rm -v $(pwd):/root/src -w /root/src notfl3/cargo-apk cargo quad-apk build --release
+// To compile for Android run this command while having Docker Destop running: docker run --rm -v ${pwd}:/root/src -w /root/src notfl3/cargo-apk cargo quad-apk build --release
 
 use macroquad::prelude::*;
 
@@ -87,6 +87,18 @@ async fn main() {
 
         draw_text(&format!("FPS: {}", &get_fps().to_string()), 10.0, 20.0, 25.0, MAGENTA);
         draw_text(&format!("Cell: {} {}", &(mouse_position().0 / tile_size[0]).floor().to_string(), &(mouse_position().1 / tile_size[1]).floor().to_string()), 10.0, 40.0, 25.0, MAGENTA);
+        
+        #[cfg(target_os = "android")]
+        draw_text("Android - Attribute", 10.0, 60.0, 25.0, MAGENTA);
+        
+        #[cfg(target_os = "windows")]
+        draw_text("Windows - Attribute", 10.0, 60.0, 25.0, MAGENTA);
+
+        if cfg!(target_os = "android") {
+            draw_text("Android - Macro", 10.0, 60.0, 25.0, MAGENTA);
+        } else if cfg!(target_os = "windows") {
+            draw_text("Windows - Macro", 10.0, 60.0, 25.0, MAGENTA);
+        }
 
         let temp_mouse_position = mouse_position();
 

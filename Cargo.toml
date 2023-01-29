@@ -10,3 +10,5 @@ macroquad = "0.3"
 
 [package.metadata.android]
 assets = "assets/"
+res = "android_res"
+icon = "@mipmap/ic_launcher"
