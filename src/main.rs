@@ -89,17 +89,23 @@ async fn main() {
         draw_text(&format!("Cell: {} {}", &(mouse_position().0 / tile_size[0]).floor().to_string(), &(mouse_position().1 / tile_size[1]).floor().to_string()), 10.0, 40.0, 25.0, MAGENTA);
         
         #[cfg(target_os = "android")]
-        draw_text("Android - Attribute", 10.0, 60.0, 25.0, MAGENTA);
+        draw_text("Android - Attribute", 10.0, 80.0, 25.0, MAGENTA);
         
         #[cfg(target_os = "windows")]
-        draw_text("Windows - Attribute", 10.0, 60.0, 25.0, MAGENTA);
+        draw_text("Windows - Attribute", 10.0, 80.0, 25.0, MAGENTA);
+        
+        #[cfg(target_os = "linux")]
+        draw_text("Linux - Attribute", 10.0, 80.0, 25.0, MAGENTA);
 
         if cfg!(target_os = "android") {
             draw_text("Android - Macro", 10.0, 60.0, 25.0, MAGENTA);
         } else if cfg!(target_os = "windows") {
             draw_text("Windows - Macro", 10.0, 60.0, 25.0, MAGENTA);
+        } else if cfg!(target_os = "linux") {
+			draw_text("Linux - Macro", 10.0, 60.0, 25.0, MAGENTA);
         }
 
+    
         let temp_mouse_position = mouse_position();
 
         if is_mouse_button_down(MouseButton::Left) == true {
